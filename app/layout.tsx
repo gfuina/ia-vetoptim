@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ColorSchemeScript, MantineProvider } from '@mantine/core';
+import LoginGuard from '@/components/LoginGuard';
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,7 +19,9 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <MantineProvider>{children}</MantineProvider>
+        <MantineProvider>
+          <LoginGuard>{children}</LoginGuard>
+        </MantineProvider>
       </body>
     </html>
   );

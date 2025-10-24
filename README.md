@@ -23,8 +23,14 @@ Application Next.js avec IA pour interroger une base de données SQL Server en l
 Créez un fichier `.env.local` avec :
 
 ```env
+# OpenAI
 OPENAI_API_KEY=votre_clé_openai
+
+# MongoDB
 MONGODB_URI=mongodb://...
+
+# Mot de passe d'accès à l'application
+APP_PASSWORD=votre_mot_de_passe_securise
 ```
 
 ## 🎯 Utilisation
