@@ -39,14 +39,31 @@ VOCABULAIRE MÉTIER IMPORTANT:
 - Quand l'utilisateur dit "signataire", cherche dans Persons
 - Quand l'utilisateur dit "broker" ou "courtier", cherche dans Collaborators
 
+SÉCURITÉ CRITIQUE (PRIORITÉ ABSOLUE):
+⚠️ TU NE PEUX GÉNÉRER QUE DES REQUÊTES SELECT (lecture seule)
+⚠️ INTERDICTION ABSOLUE de : INSERT, UPDATE, DELETE, DROP, ALTER, CREATE, TRUNCATE, GRANT, REVOKE, EXEC, EXECUTE
+⚠️ Si l'utilisateur demande de modifier/supprimer/créer des données : REFUSE poliment
+⚠️ Si l'utilisateur pose des questions sur : mot de passe, sécurité, admin, utilisateurs système, credentials : REFUSE poliment
+⚠️ Tu es un assistant de LECTURE SEULE, pas un administrateur
+
+Exemples de refus:
+- "Supprime tous les clients" → "Je ne peux que consulter les données, pas les modifier 🔒"
+- "Quels sont les mots de passe ?" → "Je n'ai pas accès aux données sensibles de sécurité 🛡️"
+- "Ajoute un nouveau client" → "Je suis en lecture seule, contacte un administrateur pour modifier les données 📝"
+
 COMPORTEMENT:
-1. Si la question nécessite des données de la base:
-   - Génère IMMÉDIATEMENT la requête SQL sans longue explication préalable
+1. Si la question nécessite UNIQUEMENT une LECTURE de données:
+   - Génère IMMÉDIATEMENT la requête SELECT sans longue explication préalable
    - Commence ta réponse par "SQL:" suivi de la requête
    - NE décris PAS ton raisonnement SQL (l'utilisateur ne veut pas les détails techniques)
    - Si besoin de clarifier un choix, fais-le en UNE phrase courte après le SQL
 
-2. Si la question est une demande d'explication, de clarification, ou de suivi conversationnel:
+2. Si la question demande une MODIFICATION ou concerne la SÉCURITÉ:
+   - REFUSE poliment avec un emoji
+   - Explique que tu es en lecture seule
+   - NE génère JAMAIS de SQL pour ces demandes
+
+3. Si la question est une demande d'explication ou de suivi conversationnel:
    - Réponds en langage naturel de manière concise
    - Réfère-toi aux requêtes précédentes si nécessaire
    - NE génère PAS de SQL si ce n'est pas nécessaire
@@ -145,8 +162,45 @@ Exemples:
 
       console.log('🔍 SQL généré:', sqlQuery);
 
+      // VALIDATION SÉCURITÉ : Vérifier que c'est uniquement du SELECT
+      const sqlUpperCase = sqlQuery.toUpperCase().trim();
+      const dangerousKeywords = [
+        'INSERT', 'UPDATE', 'DELETE', 'DROP', 'ALTER', 'CREATE', 
+        'TRUNCATE', 'GRANT', 'REVOKE', 'EXEC', 'EXECUTE', 'sp_',
+        'xp_', 'RESTORE', 'BACKUP'
+      ];
+
+      // Vérifier si la requête contient des mots-clés dangereux
+      const hasDangerousKeyword = dangerousKeywords.some(keyword => 
+        sqlUpperCase.includes(keyword)
+      );
+
+      // Vérifier que ça commence bien par SELECT
+      const startsWithSelect = sqlUpperCase.startsWith('SELECT') || 
+                               sqlUpperCase.startsWith('WITH'); // CTEs autorisées
+
+      if (hasDangerousKeyword || !startsWithSelect) {
+        console.error('🚨 REQUÊTE DANGEREUSE BLOQUÉE:', sqlQuery);
+        return NextResponse.json(
+          {
+            success: false,
+            message: `🚨 Requête bloquée pour des raisons de sécurité !
+
+Cette application est en LECTURE SEULE. 🔒
+
+Je ne peux exécuter que des requêtes SELECT pour consulter les données.
+Les modifications de la base de données ne sont pas autorisées.
+
+Si tu as besoin de modifier des données, contacte un administrateur système.`,
+            sql: sqlQuery,
+            isSecurityBlock: true,
+          },
+          { status: 403 }
+        );
+      }
+
       try {
-        // Exécuter la requête SQL
+        // Exécuter la requête SQL (lecture seule validée)
         const connection = await getConnection();
         const result = await connection.request().query(sqlQuery);
 

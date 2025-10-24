@@ -154,10 +154,15 @@ export default function Home() {
         };
         setMessages((prev) => [...prev, errorMessage]);
         
-        // Afficher une notification supplémentaire pour les erreurs firewall
+        // Afficher une notification supplémentaire pour les erreurs firewall ou sécurité
         if (data.isFirewallError) {
           setNotification({ 
             message: '🔥 Problème de firewall détecté !', 
+            type: 'error' 
+          });
+        } else if (data.isSecurityBlock) {
+          setNotification({ 
+            message: '🚨 Requête dangereuse bloquée par sécurité', 
             type: 'error' 
           });
         }
