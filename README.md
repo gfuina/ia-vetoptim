@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VetOptim IA - Base de Données Intelligente
 
-## Getting Started
+Application Next.js avec IA pour interroger une base de données SQL Server en langage naturel.
 
-First, run the development server:
+## 🚀 Fonctionnalités
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Indexation automatique** : Scanne et indexe la structure complète de votre base SQL Server
+- **Chat IA** : Posez des questions en français, l'IA génère les requêtes SQL automatiquement
+- **Résultats en temps réel** : Affichage instantané des données sous forme de tableaux
+- **Design moderne** : Interface liquid avec les couleurs VetOptim
+
+## 📦 Technologies
+
+- **Next.js 16** - Framework React
+- **Tailwind CSS 4** - Styling
+- **Mantine UI** - Composants
+- **OpenAI GPT-4** - Génération de requêtes SQL
+- **SQL Server** - Base de données source
+- **MongoDB** - Stockage du schéma indexé
+
+## ⚙️ Configuration
+
+Créez un fichier `.env.local` avec :
+
+```env
+OPENAI_API_KEY=votre_clé_openai
+MONGODB_URI=mongodb://...
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎯 Utilisation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Démarrer l'application** :
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Indexer la base** : Cliquez sur "Réindexer" pour scanner toutes les tables
 
-## Learn More
+3. **Poser des questions** : Exemples :
+   - "Donne moi toutes les personnes qui n'ont pas de contrat"
+   - "Liste les projets vieux de plus de 4 mois en Bretagne"
+   - "Compte les clients par région"
 
-To learn more about Next.js, take a look at the following resources:
+## 🗄️ Base de données
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**SQL Server** :
+- Serveur : `v2devsqlserver.database.windows.net`
+- Base : `v2dev`
+- User : `dbRead` (ReadOnly)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+L'indexation récupère :
+- Toutes les tables et schémas
+- Colonnes avec types et contraintes
+- Clés primaires et étrangères
+- Nombre de lignes par table
