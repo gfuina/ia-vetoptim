@@ -383,30 +383,6 @@ export default function Home() {
                     >
                       {msg.role === 'user' ? 'Vous' : 'Assistant IA'}
                     </p>
-                    <p className="text-white">{msg.content}</p>
-
-                    {msg.sql && (
-                      <div className="mt-3">
-                        <Button
-                          size="xs"
-                          variant="subtle"
-                          leftSection={<IconCode size={14} />}
-                          onClick={() => toggleSql(idx)}
-                          style={{
-                            color: '#4FC7BA',
-                          }}
-                        >
-                          {msg.showSql ? 'Masquer' : 'Voir'} la requête SQL
-                        </Button>
-                        <Collapse in={!!msg.showSql}>
-                          <div className="mt-2 bg-black/30 rounded-lg p-3 border border-white/10">
-                            <code className="text-sm text-accent-teal font-mono whitespace-pre-wrap break-all">
-                              {msg.sql}
-                            </code>
-                          </div>
-                        </Collapse>
-                      </div>
-                    )}
 
                     {msg.data !== undefined && (
                       <div className="mt-3">
@@ -466,6 +442,35 @@ export default function Home() {
                             </div>
                           </>
                         )}
+                      </div>
+                    )}
+
+                    {/* Explication après le tableau */}
+                    {msg.content && (
+                      <p className="text-white/70 text-sm mt-3 italic">{msg.content}</p>
+                    )}
+
+                    {/* Bouton SQL tout en bas */}
+                    {msg.sql && (
+                      <div className="mt-3 pt-3 border-t border-white/10">
+                        <Button
+                          size="xs"
+                          variant="subtle"
+                          leftSection={<IconCode size={14} />}
+                          onClick={() => toggleSql(idx)}
+                          style={{
+                            color: '#4FC7BA',
+                          }}
+                        >
+                          {msg.showSql ? 'Masquer' : 'Voir'} la requête SQL
+                        </Button>
+                        <Collapse in={!!msg.showSql}>
+                          <div className="mt-2 bg-black/30 rounded-lg p-3 border border-white/10">
+                            <code className="text-sm text-accent-teal font-mono whitespace-pre-wrap break-all">
+                              {msg.sql}
+                            </code>
+                          </div>
+                        </Collapse>
                       </div>
                     )}
                   </div>
