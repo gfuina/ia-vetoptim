@@ -177,10 +177,35 @@ Exemples:
         });
       } catch (sqlError) {
         // Erreur d'exécution SQL
+        const errorMessage = sqlError instanceof Error ? sqlError.message : 'Erreur inconnue';
+        
+        // Détecter l'erreur de firewall Azure
+        if (errorMessage.includes('not allowed to access the server') || errorMessage.includes('firewall')) {
+          const ipMatch = errorMessage.match(/IP address '([^']+)'/);
+          const ip = ipMatch ? ipMatch[1] : 'votre IP';
+          
+          return NextResponse.json(
+            {
+              success: false,
+              message: `🚫 Oups ! Le serveur Azure fait la gueule... 
+
+Ton IP (${ip}) n'est pas sur la liste VIP du firewall ! 🎭
+
+👉 Va sur le portail Azure et ajoute cette IP à la whitelist du serveur SQL.
+(Ou demande gentiment à un admin de le faire pour toi)
+
+PS : Ça peut prendre jusqu'à 5 minutes pour que ça prenne effet, alors va te chercher un café ☕`,
+              sql: sqlQuery,
+              isFirewallError: true,
+            },
+            { status: 403 }
+          );
+        }
+        
         return NextResponse.json(
           {
             success: false,
-            message: `Erreur SQL: ${sqlError instanceof Error ? sqlError.message : 'Erreur inconnue'}`,
+            message: `Erreur SQL: ${errorMessage}`,
             sql: sqlQuery,
           },
           { status: 500 }

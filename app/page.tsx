@@ -153,6 +153,14 @@ export default function Home() {
           error: true,
         };
         setMessages((prev) => [...prev, errorMessage]);
+        
+        // Afficher une notification supplémentaire pour les erreurs firewall
+        if (data.isFirewallError) {
+          setNotification({ 
+            message: '🔥 Problème de firewall détecté !', 
+            type: 'error' 
+          });
+        }
       }
     } catch (error) {
       const errorMessage: Message = {
@@ -228,13 +236,13 @@ export default function Home() {
         <div className="max-w-7xl mx-auto mb-6">
           <div className="flex items-center justify-between backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl p-4 shadow-xl">
             <div className="flex items-center gap-4">
-              <Image
+        <Image
                 src="/VETOPTIM_LOGO_2025_Blanc.svg"
                 alt="VetOptim Logo"
                 width={150}
                 height={40}
-                priority
-              />
+          priority
+        />
               <div className="h-8 w-px bg-white/30"></div>
               <h1 className="text-xl font-bold text-white">Base de Données IA</h1>
             </div>
